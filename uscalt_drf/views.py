@@ -30,14 +30,14 @@ class UploadData(APIView):
         #If user silo already exists, replace the data
         if AuxSilo.objects.filter(name=request.data.get('name')).exists():
             d_hash = hashlib.md5(request.data.get('data').encode('UTF-8'))
-            ax = AuxSilo.objects.filter(link=request.data.get('link'), time=datetime.now())
+            ax = AuxSilo.objects.filter(link=request.data.get('off_id'), time=datetime.now())
             ax.data_hash, ax.data = data_hash=d_hash, data=request.data.get('data')
             ax.save()
         else:
             #If not, Create a silo and temp store data
             d_hash = hashlib.md5(request.data.get('data').encode('UTF-8'))
             ax = AuxSilo(name=request.data.get('name'), data=request.data.get('data'), 
-            link=request.data.get('link'), time=datetime.now(timezone.utc), data_hash=d_hash)
+            link=request.data.get('off_id'), time=datetime.now(timezone.utc), data_hash=d_hash)
             ax.save()
         
         return Response({"task": "success"})
@@ -113,12 +113,13 @@ class Download(APIView):
     Create dataset from user sent data
     """
     def get(self, request, *args, **kwargs):
-        Auxs = AuxSilo.objects.filter(link=request.data.get('off_id'))
+        Auxs = AuxSilo.objects.filter(link=request.query_params.get('off_id'))
+        print(Auxs)
 
         fields = request.GET.get('fields').split(',')
 
         token, key, fname = PrepareForDownload(Auxs, fields)
-        print(fname)
+        print(request.query_params.get('email'))
 
         send_mail(
             'test',
@@ -140,6 +141,9 @@ class Download(APIView):
         return Response({'file': token})
 
 def PrepareForDownload(data, fields, cloud=False):
+    """
+    Prepares dataset for downloading
+    """
     temp_list = []
 
     if cloud:
