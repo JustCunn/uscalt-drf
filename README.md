@@ -1,4 +1,7 @@
 # **Uscalt-DRF**
+![](./images/banner.png)
+
+<a href="https://github.com/JustCunn/uscalt-drf/blob/master/LICENSE"><img alt="BSD-3 License" src="https://img.shields.io/github/license/JustCunn/uscalt-py-django" /></a>
 
 Uscalt-DRF is a library for Django-Rest-Framework backend servers to allow you to control the data retrieval process rather than Uscalt.
 
